@@ -1,5 +1,6 @@
 -- Full-Text Search para BookFragment
--- Ejecutar después de la migración de Prisma (ej: psql -U postgres -d myorbita -f prisma/migrations/manual/full-text-search.sql)
+-- Ejecutar después de las migraciones de Prisma:
+--   psql -U myorbita_user -d myorbita_db -f prisma/manual_migrations/full-text-search.sql
 
 ALTER TABLE "BookFragment"
   ADD COLUMN IF NOT EXISTS search_vector tsvector;
