@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 
 const REMINDER_MINUTES: Record<string, number> = {
   AT_TIME: 0,
+  SECONDS_30: 0.5, // 30 segundos = 0.5 minutos (para pruebas)
   MINUTES_15: 15,
   MINUTES_30: 30,
   HOUR_1: 60,
@@ -104,6 +105,7 @@ export async function GET(request: Request) {
 }
 
 function formatMinutes(minutes: number): string {
+  if (minutes < 1) return "30 segundos";
   if (minutes < 60) return `${minutes} minutos`;
   if (minutes < 1440) return `${Math.round(minutes / 60)} hora${Math.round(minutes / 60) > 1 ? "s" : ""}`;
   if (minutes < 10080) return `${Math.round(minutes / 1440)} día${Math.round(minutes / 1440) > 1 ? "s" : ""}`;

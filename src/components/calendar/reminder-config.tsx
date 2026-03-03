@@ -10,6 +10,7 @@ type ReminderOption = {
 
 const OPTIONS: ReminderOption[] = [
     { type: "AT_TIME", label: "A la hora del evento" },
+    { type: "SECONDS_30", label: "30 segundos antes (prueba)" },
     { type: "MINUTES_15", label: "15 minutos antes" },
     { type: "MINUTES_30", label: "30 minutos antes" },
     { type: "HOUR_1", label: "1 hora antes" },
