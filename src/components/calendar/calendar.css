@@ -1,0 +1,351 @@
+/* Custom styles for react-big-calendar to match MyOrbita theme */
+
+.rbc-calendar {
+    font-family: var(--font-sans);
+    color: var(--foreground);
+}
+
+.rbc-btn-group button {
+    color: var(--foreground-secondary);
+    border: 1px solid var(--border);
+    background: var(--background);
+    transition: all 0.2s;
+    box-shadow: none !important;
+}
+
+.rbc-btn-group button:hover {
+    background: var(--background-secondary);
+    color: var(--foreground);
+}
+
+.rbc-btn-group button.rbc-active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.rbc-btn-group button.rbc-active:hover {
+    background: var(--primary-hover);
+    color: white;
+}
+
+/* Header Cells */
+.rbc-header {
+    padding: 8px 0;
+    font-weight: 600;
+    color: var(--foreground-secondary);
+    border-bottom: 1px solid var(--border) !important;
+    border-left: 1px solid var(--border-light) !important;
+    text-transform: capitalize;
+}
+
+.rbc-header+.rbc-header {
+    border-left: 1px solid var(--border-light);
+}
+
+.rbc-month-view {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card);
+}
+
+.rbc-month-row {
+    border-top: 1px solid var(--border-light) !important;
+}
+
+.rbc-day-bg+.rbc-day-bg {
+    border-left: 1px solid var(--border-light) !important;
+}
+
+.rbc-today {
+    background-color: var(--background-secondary) !important;
+}
+
+.rbc-off-range-bg {
+    background-color: var(--background) !important;
+}
+
+/* Date cells */
+.rbc-date-cell {
+    padding: 4px 8px;
+    font-weight: 500;
+    color: var(--foreground);
+}
+
+.rbc-off-range {
+    color: var(--muted);
+}
+
+/* Event text */
+.rbc-event {
+    box-shadow: 0 1px 2px rgba(44, 36, 32, 0.12);
+    transition: transform 0.1s, box-shadow 0.1s;
+    min-height: 22px;
+    overflow: hidden;
+}
+
+.rbc-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(44, 36, 32, 0.15);
+}
+
+.rbc-event-content {
+    font-size: 0.8125rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rbc-toolbar {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.rbc-toolbar-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--foreground);
+    text-transform: capitalize;
+    flex: 1;
+    text-align: center;
+    order: 0;
+}
+
+.rbc-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.rbc-btn-group button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8125rem;
+    border-radius: var(--radius);
+    min-height: 36px;
+}
+
+.rbc-btn-group:last-child {
+    order: 1;
+}
+
+.rbc-btn-group:first-child {
+    order: -1;
+}
+
+/* ─── Vista Semana / Día (time grid) ───────────────────────────── */
+
+.rbc-time-view {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    font-family: var(--font-sans);
+}
+
+.rbc-time-header {
+    border-bottom: 1px solid var(--border) !important;
+    min-height: 0;
+}
+
+.rbc-time-header-content {
+    border-left: 1px solid var(--border-light) !important;
+}
+
+/* Cabecera: columna de hora vacía (alineación con la columna de horas) */
+.rbc-time-header-gutter {
+    min-width: 52px;
+    width: 52px;
+}
+
+/* Fila de días: mismo alto y alineación */
+.rbc-time-header-content > .rbc-row {
+    min-height: 48px;
+    display: flex;
+    align-items: stretch;
+}
+
+.rbc-time-header-content .rbc-header {
+    padding: 10px 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--foreground-secondary);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: none !important;
+    border-left: 1px solid var(--border-light) !important;
+}
+
+.rbc-time-header-content .rbc-header:first-child {
+    border-left: none !important;
+}
+
+/* Columna de horas (gutter) */
+.rbc-time-gutter {
+    min-width: 52px;
+    width: 52px;
+    background-color: var(--background) !important;
+    border-right: 1px solid var(--border) !important;
+}
+
+.rbc-time-gutter .rbc-timeslot-group {
+    background-color: var(--background) !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    min-height: 48px;
+}
+
+.rbc-time-gutter .rbc-time-slot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    min-height: 48px;
+}
+
+.rbc-time-gutter .rbc-label {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Área scrollable: sin scrollbar nativo */
+.rbc-time-content {
+    border-top: none !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.rbc-time-content::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.rbc-timeslot-group {
+    border-bottom: 1px solid var(--border-light) !important;
+    min-height: 48px;
+}
+
+/* Celdas de día: líneas verticales suaves */
+.rbc-day-slot {
+    border-left: 1px solid var(--border-light) !important;
+}
+
+.rbc-day-slot .rbc-time-slot {
+    border-top: 1px solid var(--border-light) !important;
+}
+
+.rbc-day-slot .rbc-timeslot-group {
+    border-bottom: 1px solid var(--border-light) !important;
+}
+
+/* Día actual en vista semana */
+.rbc-time-view .rbc-today {
+    background-color: var(--background-secondary) !important;
+}
+
+/* Línea de hora actual */
+.rbc-current-time-indicator {
+    background-color: var(--primary);
+    height: 2px !important;
+    border-radius: 1px;
+}
+
+/* Eventos en vista semana: mejor alineación */
+.rbc-time-view .rbc-event {
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+}
+
+/* ─── Vista Eventos (Agenda): tabla centrada y alineada ───────────────── */
+
+.rbc-agenda-view {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--card);
+}
+
+.rbc-agenda-view table.rbc-agenda-table {
+    width: 100%;
+    border: none;
+    border-spacing: 0;
+    border-collapse: collapse;
+    display: grid;
+    grid-template-columns: 22% 20% 58%;
+}
+
+/* Las filas no generan caja; th/td pasan a ser hijos del grid de la tabla */
+.rbc-agenda-view table.rbc-agenda-table thead > tr,
+.rbc-agenda-view table.rbc-agenda-table tbody > tr {
+    display: contents;
+}
+
+.rbc-agenda-view table.rbc-agenda-table thead > tr > th {
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+    background: var(--background);
+    border-bottom: 2px solid var(--border);
+}
+
+.rbc-agenda-view table.rbc-agenda-table thead > tr > th:not(:last-child) {
+    border-right: 1px solid var(--border-light);
+}
+
+.rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid var(--border-light);
+    border-right: 1px solid var(--border-light);
+    overflow: hidden;
+}
+
+.rbc-agenda-view table.rbc-agenda-table tbody > tr > td:nth-child(3),
+.rbc-agenda-view table.rbc-agenda-table thead > tr > th:nth-child(3) {
+    border-right: none;
+}
+
+/* Filas con solo 2 celdas: 1.ª celda → columna Hora, 2.ª → columna Evento */
+.rbc-agenda-view table.rbc-agenda-table tbody > tr:has(> td:nth-child(2):last-child) > td:nth-child(1) {
+    grid-column: 2;
+}
+.rbc-agenda-view table.rbc-agenda-table tbody > tr:has(> td:nth-child(2):last-child) > td:nth-child(2) {
+    grid-column: 3;
+}
+
+.rbc-agenda-view table.rbc-agenda-table tbody > tr:hover {
+    background: var(--background-secondary);
+}
+
+.rbc-agenda-view .rbc-agenda-date-cell,
+.rbc-agenda-view .rbc-agenda-time-cell {
+    white-space: nowrap;
+}
+
+.rbc-agenda-view .rbc-agenda-event-cell {
+    text-align: center;
+}
+
+.rbc-agenda-view .rbc-agenda-event-cell .rbc-event-content {
+    text-align: center;
+}

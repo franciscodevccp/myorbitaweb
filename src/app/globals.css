@@ -1,26 +1,208 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Fondos ─────────────────────────────── */
+  --background-secondary: #f3ede4;
+  --card-hover: #fdfbf8;
+
+  /* ── Textos ─────────────────────────────── */
+  --foreground-secondary: #6b5e54;
+  --muted: oklch(0.97 0 0);
+  --placeholder: #bfb3a8;
+
+  /* ── Acentos principales ────────────────── */
+  --primary: #8b6f5c;
+  --primary-hover: #7a5f4d;
+  --primary-light: #e8ddd4;
+  --primary-foreground: #ffffff;
+
+  /* ── Acentos secundarios ────────────────── */
+  --accent: oklch(0.97 0 0);
+  --accent-light: #f0e6d8;
+
+  /* ── Bordes y separadores ───────────────── */
+  --border: #e8e0d6;
+  --border-light: #f0ebe4;
+  --ring: #8b6f5c;
+
+  /* ── Estados ────────────────────────────── */
+  --success: #7c9a6e;
+  --success-light: #e8f0e2;
+  --warning: #c49a5c;
+  --warning-light: #f5eddf;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-light: #f5e0d8;
+  --info: #6e8a9a;
+  --info-light: #e2ecf0;
+
+  /* ── Sidebar ────────────────────────────── */
+  --sidebar-bg: #3d2e24;
+  --sidebar-text: #f0ebe4;
+  --sidebar-text-muted: #a89888;
+  --sidebar-active: #8b6f5c;
+  --sidebar-hover: #4a3830;
+
+  /* ── Tipografía ─────────────────────────── */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+
+  /* ── Espaciado y bordes ─────────────────── */
+  --radius-sm: 6px;
+  --radius: 0.625rem;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* ── Sombras ────────────────────────────── */
+  --shadow-sm: 0 1px 3px rgba(44, 36, 32, 0.04);
+  --shadow: 0 2px 8px rgba(44, 36, 32, 0.06);
+  --shadow-md: 0 4px 16px rgba(44, 36, 32, 0.08);
+  --shadow-lg: 0 8px 32px rgba(44, 36, 32, 0.1);
+  /* Fondos y texto: paleta cálida unificada (sin franjas de color) */
+  --background: #faf7f2;
+  --foreground: #2c2420;
+  --card: #ffffff;
+  --card-foreground: #2c2420;
+  --popover: #ffffff;
+  --popover-foreground: #2c2420;
+  --secondary: #f3ede4;
+  --secondary-foreground: #2c2420;
+  --muted-foreground: #6b5e54;
+  --accent-foreground: #2c2420;
+  --input: #e8e0d6;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  /* Sidebar (tema oscuro MyOrbita) */
+  --sidebar: #3d2e24;
+  --sidebar-foreground: #f0ebe4;
+  --sidebar-primary: #8b6f5c;
+  --sidebar-primary-foreground: #f0ebe4;
+  --sidebar-accent: #4a3830;
+  --sidebar-accent-foreground: #f0ebe4;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #8b6f5c;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-border: var(--border);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  height: 100%;
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.search-highlight mark {
+  background: var(--primary-light);
+  color: inherit;
+  padding: 0 0.15em;
+  border-radius: 2px;
+}
+
+/* Oculta scrollbar nativo pero mantiene scroll (rueda, touch, etc.) */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }

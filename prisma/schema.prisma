@@ -1,0 +1,160 @@
+// MyOrbita - Sistema de Gestión Académica
+// Sin autenticación (usuario único)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Book (PDF subido) ─────────────────────────────────────────
+model Book {
+  id               String     @id @default(cuid())
+  title            String
+  originalName     String
+  fileUrl          String
+  fileSize         Int        // Tamaño final en bytes
+  originalSize     Int?       // Tamaño original antes de compresión
+  totalPages       Int        @default(0)
+  status           BookStatus @default(PROCESSING)
+  subject          String?    // Materia: "Estructuras", "Diseño", etc.
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  fragments BookFragment[]
+  tags      BookTag[]
+  notes     Note[]
+}
+
+enum BookStatus {
+  PROCESSING
+  READY
+  ERROR
+}
+
+// ─── BookFragment (párrafo extraído del PDF) ────────────────────
+model BookFragment {
+  id         String @id @default(cuid())
+  bookId     String
+  pageNumber Int
+  position   Int
+  content    String
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  // search_vector tsvector → se agrega por migración SQL
+
+  @@index([bookId])
+  @@index([bookId, pageNumber])
+}
+
+// ─── BookTag ────────────────────────────────────────────────────
+model BookTag {
+  id     String @id @default(cuid())
+  bookId String
+  name   String
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, name])
+  @@index([name])
+}
+
+
+
+// ─── CalendarEvent ──────────────────────────────────────────────
+model CalendarEvent {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?
+  startDate      DateTime
+  endDate        DateTime?
+  allDay         Boolean   @default(false)
+  eventType      EventType @default(OTHER)
+  customTypeName String?   // Nombre personalizado cuando eventType es OTHER
+  color          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  reminders Reminder[]
+  notes    Note[]
+}
+
+enum EventType {
+  EXAM
+  ASSIGNMENT
+  PRESENTATION
+  CLASS
+  MEETING
+  DEADLINE
+  OTHER
+}
+
+// ─── Reminder ───────────────────────────────────────────────────
+model Reminder {
+  id                  String       @id @default(cuid())
+  eventId             String
+  type                ReminderType
+  customMinutesBefore Int?
+  sentAt              DateTime?
+  createdAt           DateTime     @default(now())
+
+  event CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([sentAt])
+}
+
+enum ReminderType {
+  AT_TIME
+  MINUTES_15
+  MINUTES_30
+  HOUR_1
+  HOUR_2
+  DAY_1
+  DAY_2
+  DAY_3
+  WEEK_1
+  CUSTOM
+}
+
+// ─── Note (many-to-many con Book y CalendarEvent) ───────────────
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  color     String?
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  books  Book[]
+  events CalendarEvent[]
+  tags   NoteTag[]
+
+  @@index([isPinned])
+}
+
+// ─── NoteTag ────────────────────────────────────────────────────
+model NoteTag {
+  id     String @id @default(cuid())
+  noteId String
+  name   String
+
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@unique([noteId, name])
+  @@index([name])
+}
+
+// ─── TelegramConfig ─────────────────────────────────────────────
+model TelegramConfig {
+  id       String  @id @default(cuid())
+  chatId   String  @unique
+  username String?
+  isActive Boolean @default(true)
+  linkedAt DateTime @default(now())
+}
