@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bot, CheckCircle, ExternalLink, Copy, Send, Loader2 } from "lucide-react";
+import { Bot, CheckCircle, ExternalLink, Copy, Send, Loader2, Unplug } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -14,10 +15,12 @@ interface TelegramSettingsProps {
 }
 
 export function TelegramSettings({ isLinked, username, linkedAt }: TelegramSettingsProps) {
+  const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [testing, setTesting] = useState<"now" | "30s" | null>(null);
   const [testError, setTestError] = useState<string | null>(null);
   const [testOk, setTestOk] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   const runTest = async (delay: number) => {
     setTestError(null);
@@ -46,6 +49,25 @@ export function TelegramSettings({ isLinked, username, linkedAt }: TelegramSetti
     navigator.clipboard.writeText(linkUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDisconnect = async () => {
+    if (!confirm("¿Desvincular la cuenta de Telegram? La otra persona podrá vincular la suya con /start en el bot.")) return;
+    setDisconnecting(true);
+    setTestError(null);
+    try {
+      const res = await fetch("/api/telegram/disconnect", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setTestError(data.error ?? "Error al desvincular");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setTestError("Error de conexión");
+    } finally {
+      setDisconnecting(false);
+    }
   };
 
   return (
@@ -113,6 +135,21 @@ export function TelegramSettings({ isLinked, username, linkedAt }: TelegramSetti
               {testOk && (
                 <p className="text-xs text-[var(--success)]">Notificación enviada. Revisa Telegram.</p>
               )}
+            </div>
+            <div className="pt-2 border-t border-border/60">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDisconnect}
+                disabled={disconnecting}
+                className="gap-2 text-muted-foreground hover:text-destructive hover:border-destructive/50"
+              >
+                {disconnecting ? <Loader2 className="size-4 animate-spin" /> : <Unplug className="size-4" />}
+                Desconectar
+              </Button>
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Desvincula esta cuenta para que otra persona pueda vincular la suya.
+              </p>
             </div>
           </div>
         ) : (

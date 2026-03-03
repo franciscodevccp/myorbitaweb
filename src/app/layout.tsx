@@ -11,6 +11,7 @@ const dmSans = DM_Sans({
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-display",
+  preload: false,
 });
 
 export const viewport: Viewport = {
