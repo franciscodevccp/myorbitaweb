@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/db";
 import { TelegramSettings } from "@/components/settings/telegram-settings";
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const config = await prisma.telegramConfig.findFirst({
     where: { isActive: true },
