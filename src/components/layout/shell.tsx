@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -38,9 +38,13 @@ const navItems = [
 function AppSidebarContent() {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+  const prevPathnameRef = useRef(pathname);
 
   useEffect(() => {
-    setOpenMobile(false);
+    if (prevPathnameRef.current !== pathname) {
+      prevPathnameRef.current = pathname;
+      setOpenMobile(false);
+    }
   }, [pathname, setOpenMobile]);
 
   return (
@@ -127,14 +131,15 @@ export function Shell({ children }: ShellProps) {
           <AppSidebarContent />
         </Sidebar>
         <SidebarInset>
-          <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b border-border bg-background px-4 md:px-6 transition-all duration-200 md:hidden">
+          <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-4 py-2 pt-[env(safe-area-inset-top)] md:hidden">
             <SidebarTrigger
-              className="md:hidden"
-              aria-label="Abrir o cerrar menú"
+              className="size-10 min-w-10 rounded-xl touch-manipulation"
+              aria-label="Abrir menú"
             />
+            <span className="text-sm font-medium text-foreground truncate">Menú</span>
             <div className="flex-1 min-w-0" />
           </header>
-          <main className="flex-1 w-full min-w-0 px-6 py-6 min-h-0 overflow-auto bg-background [&>*>:first-child]:mt-0">
+          <main className="flex-1 w-full min-w-0 px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6 min-h-0 overflow-auto bg-background [&>*>:first-child]:mt-0">
             {children}
           </main>
         </SidebarInset>
