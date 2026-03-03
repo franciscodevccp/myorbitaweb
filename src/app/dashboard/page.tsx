@@ -32,9 +32,9 @@ const modules = [
   },
   {
     href: "/dashboard/search",
-    title: "Búsqueda Global Inteligente",
+    title: "Búsqueda Global",
     description: "Encuentra cualquier concepto dentro de todos tus PDFs al instante",
-    detail: "Ir al buscador con IA",
+    detail: "Ir al buscador",
     icon: Search,
     iconBg: "bg-primary/15 text-primary",
     isLink: true,

@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { BookOpen, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import type { BookForList } from "@/lib/types";
@@ -33,6 +35,30 @@ interface BookCardProps {
 }
 
 export function BookCard({ book, onDeleteClick }: BookCardProps) {
+  const router = useRouter();
+  const [currentStatus, setCurrentStatus] = useState(book.status);
+
+  useEffect(() => {
+    if (currentStatus !== "PROCESSING") return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/books/${book.id}/status`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.status !== "PROCESSING") {
+          setCurrentStatus(data.status);
+          clearInterval(interval);
+          router.refresh();
+        }
+      } catch {
+        // Silenciar errores de red
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [currentStatus, book.id, router]);
+
   return (
     <div className="relative h-full group animate-in fade-in zoom-in-95 duration-300">
       <Link href={`/dashboard/books/${book.id}`} className="block h-full">
@@ -60,10 +86,20 @@ export function BookCard({ book, onDeleteClick }: BookCardProps) {
           <CardContent className="p-5 pt-3 mt-auto">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <StatusBadge status={book.status} />
+                <StatusBadge status={currentStatus} />
                 <span className="text-xs font-medium text-muted-foreground/70 bg-muted/40 px-2 py-1 rounded-md">
                   {book.totalPages} págs
                 </span>
+              </div>
+
+              {/* Tamaño y compresión */}
+              <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+                <span>{(book.fileSize / 1024 / 1024).toFixed(1)} MB</span>
+                {book.originalSize != null && book.originalSize > book.fileSize && (
+                  <span className="inline-flex items-center gap-1 text-[var(--success)] bg-[var(--success-light)] px-1.5 py-0.5 rounded text-[10px] font-medium">
+                    -{Math.round((1 - book.fileSize / book.originalSize) * 100)}%
+                  </span>
+                )}
               </div>
 
               <div className="h-px w-full bg-border/40 mt-1 mb-2" />

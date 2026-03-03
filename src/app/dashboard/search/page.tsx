@@ -25,14 +25,14 @@ export default async function SearchPage() {
         <div className="inline-flex items-start">
           <div className="inline-flex items-center gap-2 px-3 py-1 mb-2 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wide uppercase">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-            Asistente IA
+            Búsqueda Inteligente
           </div>
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          Conversa con tus Documentos
+          Busca en tus Documentos
         </h1>
         <p className="text-base text-muted-foreground max-w-xl">
-          Selecciona un documento de tu biblioteca y pregúntale a Gemini cualquier concepto o resumen que necesites.
+          Selecciona un documento de tu biblioteca y busca cualquier concepto, definición o término dentro de su contenido.
         </p>
       </div>
       <SearchPageClient initialBooks={books as BookForList[]} />

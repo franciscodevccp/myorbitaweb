@@ -178,7 +178,7 @@ export function SearchPageClient({ initialBooks }: SearchPageClientProps) {
               </div>
               <h3 className="text-xl font-semibold mb-2 text-foreground">Listo para buscar</h3>
               <p className="text-muted-foreground text-sm">
-                Escribe una palabra clave o una frase para buscar coincidencias exactas y semánticas dentro del documento.
+                Escribe una palabra clave o frase. El sistema buscará coincidencias en todo el contenido del documento.
               </p>
             </div>
           ) : (

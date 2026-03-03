@@ -1,6 +1,5 @@
 import { readFile } from "fs/promises";
 
-// pdf-parse 1.x: se carga solo al usarlo para evitar que ejecute su bloque de test (lee test/data/...)
 function getPdfParse(): (buffer: Buffer, options?: any) => Promise<{ text: string; numpages: number }> {
   return require("pdf-parse");
 }
@@ -20,55 +19,81 @@ export async function extractPdfFragments(filePath: string): Promise<{
 
   const pdfParse = getPdfParse();
 
-  // Custom page renderer to capture text per page accurately
+  // Array externo para capturar texto por página individual
+  const pageTexts: string[] = [];
+
   const render_page = async (pageData: any) => {
-    // pageData has .pageIndex (0-based) and .getTextContent()
-    const render_options = {
-      // Replaces all occurrences of whitespace with standard spaces
+    const textContent = await pageData.getTextContent({
       normalizeWhitespace: true,
-      // Do not attempt to combine text items
-      disableCombineTextItems: false
-    };
+      disableCombineTextItems: false,
+    });
 
-    return pageData.getTextContent(render_options)
-      .then(function (textContent: any) {
-        let text = '';
-        for (let item of textContent.items) {
-          text += item.str + ' ';
+    let text = "";
+    for (const item of textContent.items) {
+      // Detectar saltos de línea implícitos por cambio de posición Y
+      if (item.hasEOL) {
+        text += "\n";
+      }
+      text += item.str;
+    }
+
+    const cleaned = text.trim();
+    pageTexts.push(cleaned);
+    return cleaned;
+  };
+
+  const data = await pdfParse(buffer, { pagerender: render_page });
+
+  // Ahora pageTexts[0] = página 1, pageTexts[1] = página 2, etc.
+  for (let i = 0; i < pageTexts.length; i++) {
+    const pageText = pageTexts[i];
+    if (!pageText || pageText.length < 10) continue;
+
+    // Intentar dividir en párrafos naturales (doble salto de línea)
+    const rawParagraphs = pageText.split(/\n\s*\n/);
+
+    let position = 0;
+    for (const paragraph of rawParagraphs) {
+      const cleaned = paragraph.replace(/\s+/g, " ").trim();
+
+      if (cleaned.length < 20) continue;
+
+      // Si un párrafo es muy largo (>800 chars), subdividir por oraciones
+      if (cleaned.length > 800) {
+        const sentences = cleaned.match(/[^.!?]+[.!?]+\s*/g) || [cleaned];
+        let chunk = "";
+
+        for (const sentence of sentences) {
+          if ((chunk + sentence).length > 800 && chunk.length >= 20) {
+            position++;
+            fragments.push({
+              pageNumber: i + 1,
+              position,
+              content: chunk.trim(),
+            });
+            chunk = sentence;
+          } else {
+            chunk += sentence;
+          }
         }
-        return text;
-      });
-  };
 
-  const options = {
-    pagerender: render_page
-  };
-
-  const data = await pdfParse(buffer, options);
-
-  // data.text will now contain the text of all pages joined by \n\n (which is what pdf-parse uses when joining pagerender results)
-  // However, pdf-parse has a quirk: it prepends an extra \n\n. Let's split it carefully.
-  const pages = data.text.split('\n\n').filter(p => p.trim() !== '');
-
-  for (let i = 0; i < pages.length; i++) {
-    const pageText = pages[i];
-
-    // Attempt to split into paragraphs if there are large gaps, or just use chunks
-    // Since we lost actual paragraph breaks in normalization, we can try to split by some logic,
-    // or just break it down by length. For now, let's treat the whole page or large chunks as fragments.
-
-    const chunks = pageText.match(/.{1,800}(\s|$)/g) || [pageText];
-
-    chunks.forEach((chunk: string, index: number) => {
-      const cleanText = chunk.replace(/\s+/g, " ").trim();
-      if (cleanText.length >= 20) {
+        if (chunk.trim().length >= 20) {
+          position++;
+          fragments.push({
+            pageNumber: i + 1,
+            position,
+            content: chunk.trim(),
+          });
+        }
+      } else {
+        position++;
         fragments.push({
           pageNumber: i + 1,
-          position: index + 1,
-          content: cleanText,
+          position,
+          content: cleaned,
         });
       }
-    });
+    }
   }
 
   return {

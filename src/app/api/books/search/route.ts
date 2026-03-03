@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/db";
+
+const searchQuerySchema = z.object({
+  q: z.string().min(2).max(200),
+  bookId: z.string().optional().nullable(),
+  limit: z.coerce.number().min(1).max(50).default(20),
+});
 
 export type SearchResultItem = {
   id: string;
@@ -16,16 +23,21 @@ export type SearchResultItem = {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const query = searchParams.get("q")?.trim();
-  const bookId = searchParams.get("bookId") || null;
-  const limit = Math.min(parseInt(searchParams.get("limit") ?? "20", 10), 50);
+  const parsed = searchQuerySchema.safeParse({
+    q: searchParams.get("q")?.trim() ?? "",
+    bookId: searchParams.get("bookId") || null,
+    limit: searchParams.get("limit") ?? "20",
+  });
 
-  if (!query || query.length < 2) {
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "Escribe al menos 2 caracteres para buscar." },
+      { error: "Datos inválidos: " + (parsed.error.issues[0]?.message ?? "q requerido, mínimo 2 caracteres") },
       { status: 400 }
     );
   }
+
+  const { q: query, bookId, limit: limitNum } = parsed.data;
+  const limit = limitNum;
 
   try {
     const bookCondition = bookId ? `AND b.id = $3` : "";
@@ -49,7 +61,7 @@ export async function GET(request: Request) {
       ) AS highlighted
     FROM "BookFragment" bf
     JOIN "Book" b ON b.id = bf."bookId"
-    CROSS JOIN plainto_tsquery('spanish', $1) query
+    CROSS JOIN websearch_to_tsquery('spanish', $1) query
     WHERE bf.search_vector @@ query
       AND b.status = 'READY'
       ${bookCondition}
@@ -67,7 +79,7 @@ export async function GET(request: Request) {
       message.includes("column") ||
       message.includes("does not exist")
     ) {
-      return fallbackSearch(query, limit, bookId);
+      return fallbackSearch(query, limit, bookId ?? null);
     }
     console.error("[Search API]", err);
     return NextResponse.json(

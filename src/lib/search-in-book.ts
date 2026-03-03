@@ -25,12 +25,8 @@ export async function searchInBook(
   if (trimmed.length < 2) return [];
 
   try {
-    // 1. Process query into an OR-based terms string for tsquery: "word1 | word2 | word3"
-    const terms = trimmed.split(/\s+/).filter(w => w.length > 1).join(" | ");
-    if (!terms) return [];
+    const params: (string | number)[] = [trimmed, limit, bookId];
 
-    const params: (string | number)[] = [terms, limit, bookId];
-    // ts_rank_cd is often better for ranking, and we use to_tsquery instead of plainto_tsquery for OR logic.
     const results = (await prisma.$queryRawUnsafe(
       `
       SELECT
@@ -48,11 +44,11 @@ export async function searchInBook(
         ) AS highlighted
       FROM "BookFragment" bf
       JOIN "Book" b ON b.id = bf."bookId"
-      CROSS JOIN to_tsquery('spanish', $1) q
+      CROSS JOIN websearch_to_tsquery('spanish', $1) q
       WHERE bf.search_vector @@ q AND b.id = $3 AND b.status = 'READY'
       ORDER BY relevance DESC
       LIMIT $2
-    `,
+      `,
       ...params
     )) as SearchInBookResult[];
 

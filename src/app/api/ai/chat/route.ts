@@ -1,25 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { searchInBook } from "@/lib/search-in-book";
+
+const chatSchema = z.object({
+  bookId: z.string().min(1).max(100),
+  message: z.string().min(2).max(1000),
+});
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { bookId, message } = body;
+        const parsed = chatSchema.safeParse(body);
 
-        if (!bookId) {
+        if (!parsed.success) {
             return NextResponse.json(
-                { error: "Se requiere especificar el ID del libro (bookId)" },
+                { error: "Datos inválidos: " + (parsed.error.issues[0]?.message ?? "campos requeridos") },
                 { status: 400 }
             );
         }
 
-        if (!message || typeof message !== "string") {
-            return NextResponse.json(
-                { error: "Se requiere un mensaje" },
-                { status: 400 }
-            );
-        }
+        const { bookId, message } = parsed.data;
 
         const book = await prisma.book.findUnique({
             where: { id: bookId },
@@ -35,13 +36,6 @@ export async function POST(req: NextRequest) {
 
         // —— Búsqueda Directa en el Sistema ——
         let searchQuery = message.trim();
-        if (searchQuery.length < 2) {
-            return NextResponse.json(
-                { error: "Escribe una palabra de al menos 2 caracteres para buscar en el libro." },
-                { status: 400 }
-            );
-        }
-
         let fragments = await searchInBook(searchQuery, bookId, 15);
 
         const userQueryClean = cleanForSearch(message);
